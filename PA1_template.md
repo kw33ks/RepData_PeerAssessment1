@@ -20,6 +20,7 @@ Load required packages
 ```r
 library(plyr)
 library(chron)
+library(lattice)
 ```
 
 ###What is mean total number of steps taken per day?
@@ -180,4 +181,30 @@ mean(Merged_Steps[,2])-mean(Total_Steps[,2])
 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
 
+
+```r
+for (i in 1:nrow(mergeddata) ) {
+  time <- chron(as.character(mergeddata[i,2]), 
+     format=c(dates="y-m-d"), out.format=c("y-m-d"))
+  
+  day_of_week <- weekdays(time)
+  if (day_of_week == "Sun" | day_of_week == "Sat")
+  {
+    day_type <- "Weekend"
+  } else {
+    day_type <- "Weekday"
+  }
+  
+  mergeddata[i,4] <- day_type
+  }
+```
+
+Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days:
+
+
+```r
+xyplot(mergeddata$steps ~ mergeddata$interval | mergeddata$V4, layout =c(2,1), type="l")
+```
+
+![plot of chunk addweektypegraph](figure/addweektypegraph.png) 
 
